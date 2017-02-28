@@ -1,0 +1,9 @@
+[package]
+name = "auracite"
+version = "0.1.0"
+authors = ["berwyn <berwyn.codeweaver@gmail.com>"]
+
+[dependencies]
+rocket = "0.2.2"
+rocket_codegen = "0.2.2"
+xml-rs = "0.4.0"
