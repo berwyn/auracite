@@ -1,11 +1,8 @@
 #![feature(plugin)]
 #![plugin(rocket_codegen)]
 
+extern crate auracite;
 extern crate rocket;
-extern crate xml;
-
-mod lodestone;
-mod rss;
 
 #[get("/")]
 fn index() -> &'static str {
@@ -15,6 +12,6 @@ fn index() -> &'static str {
 fn main() {
     rocket::ignite()
         .mount("/", routes![index])
-        .mount("/lodestone", routes![lodestone::index, lodestone::rss])
+        .mount("/lodestone", routes![auracite::lodestone::index, auracite::lodestone::rss])
         .launch();
 }
