@@ -1,2 +1,2 @@
 [workspace]
-members = ["./auracite-web"]
+members = ["./auracite-web", "./auracite-worker"]

@@ -1,0 +1,9 @@
+[package]
+name = "auracite-worker"
+version = "0.1.0"
+authors = ["berwyn <berwyn.codeweaver@gmail.com>"]
+workspace = "../"
+
+[dependencies]
+select = "0.3.0"
+hyper = "0.10.4"
