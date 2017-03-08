@@ -1,25 +1,28 @@
-use rss::{RSS, RSSChannel, RSSChannelItem};
-use xml::writer::{EventWriter, XmlEvent};
+use rss::{RSS, RSSChannel, RSSChannelItem, write_simple_xml};
+use xml::writer::EventWriter;
 
+#[derive(Debug)]
 pub struct NewsItem {
     title: String,
     description: String,
     link: String,
 }
 
+impl NewsItem {
+    pub fn create(title: String, description: String, link: String) -> NewsItem {
+        NewsItem {
+            title: title,
+            description: description,
+            link: link,
+        }
+    }
+}
+
 impl RSSChannelItem for NewsItem {
     fn write_xml(&self, w: &mut EventWriter<&mut Vec<u8>>) {
-        w.write(XmlEvent::start_element("title")).unwrap();
-        w.write(self.title.as_str()).unwrap();
-        w.write(XmlEvent::end_element()).unwrap();
-
-        w.write(XmlEvent::start_element("description")).unwrap();
-        w.write(self.description.as_str()).unwrap();
-        w.write(XmlEvent::end_element()).unwrap();
-
-        w.write(XmlEvent::start_element("link")).unwrap();
-        w.write(self.link.as_str()).unwrap();
-        w.write(XmlEvent::end_element()).unwrap();
+        write_simple_xml(w, "title", self.title.as_str());
+        write_simple_xml(w, "description", self.description.as_str());
+        write_simple_xml(w, "link", self.link.as_str());
     }
 }
 

@@ -3,6 +3,12 @@ use rocket::http::{ContentType, Status};
 use rocket::response::{Responder, Response};
 use xml::writer::{EmitterConfig, EventWriter, XmlEvent};
 
+pub fn write_simple_xml(w: &mut EventWriter<&mut Vec<u8>>, tag: &str, body: &str) {
+    w.write(XmlEvent::start_element(tag)).unwrap();
+    w.write(body).unwrap();
+    w.write(XmlEvent::end_element()).unwrap();
+}
+
 pub trait RSSChannelItem {
     fn write_xml(&self, w: &mut EventWriter<&mut Vec<u8>>);
 }
@@ -36,21 +42,10 @@ impl RSS {
     fn write_channel(&self, w: &mut EventWriter<&mut Vec<u8>>) {
         w.write(XmlEvent::start_element("channel")).unwrap();
 
-        w.write(XmlEvent::start_element("title")).unwrap();
-        w.write(self.channel.title.as_str()).unwrap();
-        w.write(XmlEvent::end_element()).unwrap();
-
-        w.write(XmlEvent::start_element("description")).unwrap();
-        w.write(self.channel.description.as_str()).unwrap();
-        w.write(XmlEvent::end_element()).unwrap();
-
-        w.write(XmlEvent::start_element("link")).unwrap();
-        w.write(self.channel.link.as_str()).unwrap();
-        w.write(XmlEvent::end_element()).unwrap();
-
-        w.write(XmlEvent::start_element("ttl")).unwrap();
-        w.write(self.channel.ttl.to_string().as_str()).unwrap();
-        w.write(XmlEvent::end_element()).unwrap();
+        write_simple_xml(w, "title", self.channel.title.as_str());
+        write_simple_xml(w, "description", self.channel.description.as_str());
+        write_simple_xml(w, "link", self.channel.link.as_str());
+        write_simple_xml(w, "ttl", self.channel.ttl.to_string().as_str());
 
         for item in self.channel.items.iter() {
             w.write(XmlEvent::start_element("item")).unwrap();

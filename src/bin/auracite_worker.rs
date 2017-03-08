@@ -1,11 +1,13 @@
+extern crate auracite;
 extern crate hyper;
 extern crate select;
 
 use std::io::{Read};
 
+use auracite::lodestone::{NewsItem};
 use hyper::{Client};
 use select::document::Document;
-use select::predicate::{Class};
+use select::predicate::{Class, Name};
 
 fn main() {
     println!("Hello, Worker!");
@@ -23,11 +25,25 @@ fn download_page(url: &str) -> String {
 
 fn parse_document(doc: &str) {
     let document = Document::from(doc);
-    for topic in document.find(Class("news__content__list__topics")).children().iter() {
-        let title = topic.find(Class("ic_topics")).children().first();
-        match title {
-            Some(node) => println!("{:?}", node.text()),
-            None => {},
-        }
+    let items = document.find(Class("news__content__list__topics")).children();
+    for topic in items.filter(Name("li")).iter() {
+        let title = match topic.find(Class("ic_topics")).children().first() {
+            Some(node) => node.text(),
+            None => "".to_string(),
+        };
+
+        let body = match topic.find(Class("news__content__list__topics--body")).first() {
+            Some(node) => node.text(),
+            None => "".to_string(),
+        };
+
+        let link = match topic.find(Class("news__content__list__topics__link_banner")).first() {
+            Some(node) => node.attr("href").unwrap().to_string(),
+            None => "".to_string(),
+        };
+
+        let item = NewsItem::create(title, body, link);
+
+        println!("{:?}", item);
     }
 }
