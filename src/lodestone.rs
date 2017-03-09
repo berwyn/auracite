@@ -1,6 +1,7 @@
 use rss::{RSS, RSSChannel, RSSChannelItem, write_simple_xml};
 use xml::writer::EventWriter;
 
+/// An RSS Feed item representing a news topic as Lodestone displays it.
 #[derive(Debug)]
 pub struct NewsItem {
     title: String,
@@ -9,6 +10,19 @@ pub struct NewsItem {
 }
 
 impl NewsItem {
+    /// Constructs a new `NewsItem`
+    ///
+    /// These items will be represented verbatim in the resulting XMLRSS, so they should have at
+    /// least an empty string
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// let title = String::from("Cool news!");
+    /// let description = String::from("There's some really cool news you should check out!");
+    /// let link = String::from("https://www.coolsite.com/news-story");
+    /// let item = auracite::lodestone::NewsItem::create(title, description, link);
+    /// ```
     pub fn create(title: String, description: String, link: String) -> NewsItem {
         NewsItem {
             title: title,

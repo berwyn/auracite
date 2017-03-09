@@ -3,24 +3,41 @@ use rocket::http::{ContentType, Status};
 use rocket::response::{Responder, Response};
 use xml::writer::{EmitterConfig, EventWriter, XmlEvent};
 
+/// Writes a simple XML element to the provided buffer
+///
+/// # Examples
+///
+/// ```rust
+/// write_simple_xml(w, "title", "My Cool News Feed");
+/// //=> <title>My Cool News Feed</title>
+/// ```
 pub fn write_simple_xml(w: &mut EventWriter<&mut Vec<u8>>, tag: &str, body: &str) {
     w.write(XmlEvent::start_element(tag)).unwrap();
     w.write(body).unwrap();
     w.write(XmlEvent::end_element()).unwrap();
 }
 
+/// A trait allowing arbitrary items can be serialised into the feed
 pub trait RSSChannelItem {
+    /// Write the element into the buffer
     fn write_xml(&self, w: &mut EventWriter<&mut Vec<u8>>);
 }
 
+/// A channel of news items that the feed should contain
 pub struct RSSChannel {
+    /// The name of the feed or site
     pub title: String,
+    /// A short tagline describing the feed/site
     pub description: String,
+    /// The homepage URL of the feed/site
     pub link: String,
+    /// Time in seconds the client should wait to refresh items
     pub ttl: u32,
+    /// A list of news items to show in the feed
     pub items: Vec<Box<RSSChannelItem>>,
 }
 
+/// The root object of an RSS feed
 pub struct RSS {
     pub channel: RSSChannel,
 }

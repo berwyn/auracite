@@ -4,14 +4,11 @@
 extern crate auracite;
 extern crate rocket;
 
-#[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
-}
+use auracite::{web, lodestone};
 
 fn main() {
     rocket::ignite()
-        .mount("/", routes![index])
-        .mount("/lodestone", routes![auracite::lodestone::index, auracite::lodestone::rss])
+        .mount("/", routes![web::web_root, web::static_asset])
+        .mount("/lodestone", routes![lodestone::index, lodestone::rss])
         .launch();
 }

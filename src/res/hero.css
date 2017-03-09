@@ -1,0 +1,9 @@
+.ac-layout-transparent {
+    background-color: #DFDBE5;
+    background-image: url(/static/hero.svg);
+}
+
+.ac-layout-transparent .mdl-layout__header,
+.ac-layout-transparent .mdl-layout__drawer-button {
+    color: white;
+}
