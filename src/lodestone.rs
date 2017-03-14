@@ -4,9 +4,9 @@ use xml::writer::EventWriter;
 /// An RSS Feed item representing a news topic as Lodestone displays it.
 #[derive(Debug)]
 pub struct NewsItem {
-    title: String,
-    description: String,
-    link: String,
+    pub title: String,
+    pub description: String,
+    pub link: String,
 }
 
 impl NewsItem {

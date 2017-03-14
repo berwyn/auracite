@@ -10,5 +10,6 @@ fn main() {
     rocket::ignite()
         .mount("/", routes![web::web_root, web::static_asset])
         .mount("/lodestone", routes![lodestone::index, lodestone::rss])
+        .catch(errors![web::not_found])
         .launch();
 }

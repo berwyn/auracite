@@ -9,10 +9,17 @@ use hyper::{Client};
 use select::document::Document;
 use select::predicate::{Class, Name};
 
+const PAGES: [&'static str; 4] = [
+    "na", "jp", "de", "fr"
+];
+
 fn main() {
-    println!("Hello, Worker!");
-    let homepage = download_page("http://na.finalfantasyxiv.com/lodestone/topics/");
-    parse_document(homepage.as_str());
+    for page in PAGES.into_iter() {
+        let url = format!("http://{}.finalfantasyxiv.com/lodestone/topics", page);
+        let download = download_page(url.as_str());
+        let topics = parse_document(download.as_str());
+        println!("{} -- {}", page, topics.len());
+    }
 }
 
 fn download_page(url: &str) -> String {
@@ -23,7 +30,9 @@ fn download_page(url: &str) -> String {
     body
 }
 
-fn parse_document(doc: &str) {
+fn parse_document(doc: &str) -> Vec<NewsItem> {
+    let mut topics: Vec<NewsItem> = vec![];
+
     let document = Document::from(doc);
     let items = document.find(Class("news__content__list__topics")).children();
     for topic in items.filter(Name("li")).iter() {
@@ -43,7 +52,8 @@ fn parse_document(doc: &str) {
         };
 
         let item = NewsItem::create(title, body, link);
-
-        println!("{:?}", item);
+        topics.push(item);
     }
+
+    topics
 }

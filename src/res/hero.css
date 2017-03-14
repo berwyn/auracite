@@ -1,9 +1,10 @@
-.ac-layout-transparent {
-    background-color: #DFDBE5;
+.hero {
+    background-color: rebeccapurple;
     background-image: url(/static/hero.svg);
-}
-
-.ac-layout-transparent .mdl-layout__header,
-.ac-layout-transparent .mdl-layout__drawer-button {
     color: white;
+    padding: 10rem;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
