@@ -7,6 +7,7 @@ extern crate rocket;
 extern crate xml;
 
 mod html;
+mod xml_ext;
 
 pub mod lodestone;
 pub mod rss;
