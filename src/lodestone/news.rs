@@ -1,9 +1,11 @@
+use redis::ToRedisArgs;
 use rss::RSSChannelItem;
+use serde_json;
 use xml::writer::EventWriter;
 use xml_ext::write_simple_xml;
 
 /// An RSS Feed item representing a news topic as Lodestone displays it.
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct NewsItem {
     pub title: String,
     pub description: String,
@@ -30,6 +32,10 @@ impl NewsItem {
             description: description,
             link: link,
         }
+    }
+
+    pub fn to_json(&self) -> String {
+        serde_json::to_string(self).unwrap()
     }
 }
 
