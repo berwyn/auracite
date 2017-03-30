@@ -4,9 +4,12 @@ version = "0.1.0"
 authors = ["berwyn <berwyn.codeweaver@gmail.com>"]
 
 [dependencies]
+dotenv = "0.10.0"
+dotenv_macros = "0.10.0"
 hyper = "0.10.4"
 maud = { version = "0.16.2", features = ["rocket"] }
 maud_macros = "0.16.2"
+redis = "0.8.0"
 rocket = "0.2.2"
 rocket_codegen = "0.2.2"
 select = "0.3.0"

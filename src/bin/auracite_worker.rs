@@ -1,10 +1,16 @@
+#![feature(plugin)]
+#![plugin(dotenv_macros)]
+
 extern crate auracite;
+extern crate dotenv;
 extern crate hyper;
 extern crate select;
+extern crate redis;
 
 use std::io::{Read};
 
 use auracite::lodestone::{NewsItem};
+use dotenv::dotenv;
 use hyper::{Client};
 use select::document::Document;
 use select::predicate::{Class, Name};
@@ -14,12 +20,29 @@ const PAGES: [&'static str; 4] = [
 ];
 
 fn main() {
+    dotenv().ok();
+    let conn = connect_redis();
+
     for page in PAGES.into_iter() {
         let url = format!("http://{}.finalfantasyxiv.com/lodestone/topics", page);
         let download = download_page(url.as_str());
         let topics = parse_document(download.as_str());
         println!("{} -- {}", page, topics.len());
     }
+}
+
+fn connect_redis() -> redis::Connection {
+    let client = match redis::Client::open(dotenv!("REDIS_URL")) {
+        Ok(client) => client,
+        Err(err) => panic!("Redis client failed to connect! {}", err)
+    };
+
+    let conn = match client.get_connection() {
+        Ok(conn) => conn,
+        Err(err) => panic!("Redis failed to get connection! {}", err)
+    };
+
+    conn
 }
 
 fn download_page(url: &str) -> String {
