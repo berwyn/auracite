@@ -20,7 +20,7 @@ pub fn connect_redis() -> Connection {
 pub fn push_news(locale: &'static str, topics: &Vec<NewsItem>, conn: &Connection) -> Result<(), RedisError> {
     let json: Vec<String> = topics.iter().map(|ref t| t.to_json()).collect();
 
-    conn.lpush(format!("news:{}", locale), json)
+    conn.rpush(format!("news:{}", locale), json)
 }
 
 pub fn pull_news(locale: &'static str, conn: &Connection) -> Vec<NewsItem> {
