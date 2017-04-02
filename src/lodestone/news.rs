@@ -33,6 +33,18 @@ impl NewsItem {
         }
     }
 
+    /// Constructs a `NewsItem` using a JSON string as the source
+    ///
+    /// # Examples
+    ///
+    /// ```rs
+    /// let json = String::from("{ title:\"Breaking News!\", ... ");
+    /// let item = NewsItem::from_json(json);
+    /// ```
+    pub fn from_json(json: &String) -> NewsItem {
+        serde_json::from_str(json.as_str()).unwrap()
+    }
+
     pub fn to_json(&self) -> String {
         serde_json::to_string(self).unwrap()
     }
