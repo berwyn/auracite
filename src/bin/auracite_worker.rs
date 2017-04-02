@@ -14,7 +14,7 @@ use auracite::storage::{connect_redis, push_news};
 use dotenv::dotenv;
 use hyper::{Client};
 use select::document::Document;
-use select::predicate::{Class, Name, Not};
+use select::predicate::{Class, Name};
 
 const PAGES: [&'static str; 4] = [
     "na", "jp", "de", "fr"
