@@ -10,9 +10,9 @@ use rocket::config::{Config};
 
 fn main() {
     rocket::custom(config(), true)
-        .mount("/", routes![web::web_root, web::static_asset])
+        .mount("/", routes![web::root::web_root, web::assets::static_asset])
         .mount("/lodestone", routes![lodestone::index, lodestone::rss])
-        .catch(errors![web::not_found])
+        .catch(errors![web::core::not_found])
         .launch();
 }
 
