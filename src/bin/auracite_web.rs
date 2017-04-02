@@ -21,6 +21,8 @@ fn config() -> Config {
 
     let env = Environment::active().unwrap();
     let mut config = Config::build(env);
+    config = config.address("0.0.0.0");
+
     let port = load_var("PORT");
     if let Some(port) = port.parse().ok() {
         config = config.port(port);
