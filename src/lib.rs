@@ -16,6 +16,7 @@ extern crate xml;
 mod html;
 mod xml_ext;
 
+pub mod env;
 pub mod lodestone;
 pub mod storage;
 pub mod rss;

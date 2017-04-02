@@ -1,10 +1,13 @@
 use std::result::Result;
 
+use env::load_var;
 use lodestone::NewsItem;
 use redis::{Client, Commands, Connection, RedisError};
 
 pub fn connect_redis() -> Connection {
-    let client = match Client::open(dotenv!("REDIS_URL")) {
+    let env = load_var("REDIS_URL");
+    let url = env.as_str();
+    let client = match Client::open(url) {
         Ok(client) => client,
         Err(err) => panic!("Failed to open redis connection!\n{}", err)
     };
