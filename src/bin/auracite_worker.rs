@@ -10,9 +10,9 @@ extern crate redis;
 use std::io::{Read};
 
 use auracite::lodestone::{NewsItem};
+use auracite::storage::{connect_redis, push_news};
 use dotenv::dotenv;
 use hyper::{Client};
-use redis::{Commands};
 use select::document::Document;
 use select::predicate::{Class, Name};
 
@@ -28,27 +28,12 @@ fn main() {
         let url = format!("http://{}.finalfantasyxiv.com/lodestone/topics", page);
         let download = download_page(url.as_str());
         let topics = parse_document(download.as_str());
-        let json: Vec<String> = topics.iter().map(|ref t| t.to_json()).collect();
-
-        match conn.lpush(format!("news:{}", page), json) {
+        
+        match push_news(page, &topics, &conn) {
             Ok(()) => println!("Pushed {} item(s) for locale {}", topics.len(), page),
             Err(err) => panic!("Failed to push lang {}!\n{}", page, err)
         };
     }
-}
-
-fn connect_redis() -> redis::Connection {
-    let client = match redis::Client::open(dotenv!("REDIS_URL")) {
-        Ok(client) => client,
-        Err(err) => panic!("Redis client failed to connect! {}", err)
-    };
-
-    let conn = match client.get_connection() {
-        Ok(conn) => conn,
-        Err(err) => panic!("Redis failed to get connection! {}", err)
-    };
-
-    conn
 }
 
 fn download_page(url: &str) -> String {

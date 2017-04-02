@@ -1,4 +1,3 @@
-use redis::ToRedisArgs;
 use rss::RSSChannelItem;
 use serde_json;
 use xml::writer::EventWriter;
