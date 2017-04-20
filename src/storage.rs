@@ -5,7 +5,7 @@ use lodestone::NewsItem;
 use redis::{Client, Commands, Connection, RedisError};
 
 pub fn connect_redis() -> Connection {
-    let env = load_var("REDIS_URL");
+    let env = load_var("REDIS_URL", "redis://127.0.0.1:6379");
     let url = env.as_str();
     let client = match Client::open(url) {
         Ok(client) => client,

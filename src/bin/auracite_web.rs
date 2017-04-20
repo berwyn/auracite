@@ -23,7 +23,7 @@ fn config() -> Config {
     let mut config = Config::build(env);
     config = config.address("0.0.0.0");
 
-    let port = load_var("PORT");
+    let port = load_var("PORT", "8080");
     if let Some(port) = port.parse().ok() {
         config = config.port(port);
     }
