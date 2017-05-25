@@ -31,6 +31,8 @@ pub struct JSONFeedItem {
 /// A feed of news items per the JSONFeed spec
 #[derive(Serialize)]
 pub struct JSONFeed {
+    /// The JSON Feed version of this feed
+    pub version: String,
     /// The name of the feed or site
     pub title: String,
     /// A short tagline describing the feed/site
@@ -41,6 +43,17 @@ pub struct JSONFeed {
     pub icon: Option<String>,
     /// A list of items to show in the feed
     pub items: Vec<JSONFeedItem>,
+}
+
+impl JSONFeed {
+    pub fn new(version: u16, title: String, description: String, home_page_url: String) -> JSONFeed {
+        JSONFeed {
+            version: format!("https://jsonfeed.org/version/{}", version),
+            title, description, home_page_url,
+            icon: None,
+            items: vec![]
+        }
+    }
 }
 
 impl<'r> Responder<'r> for JSONFeed {

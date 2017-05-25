@@ -26,13 +26,14 @@ pub fn rss() -> RSS {
 pub fn jsonfeed() -> JSONFeed {
     let items = pull_news("na", &connect_redis()).into_iter().map(convert_news).collect();
 
-    JSONFeed {
-        title: String::from("FINAL FANTASY XIV, The Lodestone"),
-        description: String::from("Official community site for FINAL FANTASY XIV: A Realm Reborn"),
-        home_page_url: String::from("http://na.finalfantasyxiv.com/lodestone/"),
-        icon: None,
-        items,
-    }
+    let mut feed = JSONFeed::new(
+        1,
+        String::from("FINAL FANTASY XIV, The Lodestone"),
+        String::from("Official community site for FINAL FANTASY XIV: A Realm Reborn"),
+        String::from("http://na.finalfantasyxiv.com/lodestone/"));
+    feed.items = items;
+
+    feed
 }
 
 fn box_news<T: RSSChannelItem + 'static>(item: T) -> Box<RSSChannelItem> {
