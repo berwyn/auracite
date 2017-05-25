@@ -27,7 +27,7 @@ pub fn push_news(locale: &'static str, topics: &Vec<NewsItem>, conn: &Connection
 }
 
 pub fn pull_news(locale: &'static str, conn: &Connection) -> Vec<NewsItem> {
-    let vec: Vec<String> = match conn.lrange(format!("news:{}", locale), 0, 19) {
+    let vec: Vec<String> = match conn.lrange(format!("news:{}", locale), -20, -1) {
         Ok(vec) => vec,
         Err(err) => panic!("Couldn't get JSON from redis!\n{}", err)
     };
