@@ -11,7 +11,7 @@ use rocket::config::{Config};
 fn main() {
     rocket::custom(config(), true)
         .mount("/", routes![web::root::web_root, web::assets::static_asset])
-        .mount("/lodestone", routes![lodestone::index, lodestone::rss])
+        .mount("/lodestone", routes![lodestone::index, lodestone::rss, lodestone::jsonfeed])
         .catch(errors![web::core::not_found])
         .launch();
 }

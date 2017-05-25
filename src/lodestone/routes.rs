@@ -1,3 +1,4 @@
+use jsonfeed::{JSONFeed, JSONFeedConvertable, JSONFeedItem};
 use rss::{RSS, RSSChannel, RSSChannelItem};
 use storage::{connect_redis, pull_news};
 
@@ -21,6 +22,23 @@ pub fn rss() -> RSS {
     }
 }
 
+#[get("/jsonfeed")]
+pub fn jsonfeed() -> JSONFeed {
+    let items = pull_news("na", &connect_redis()).into_iter().map(convert_news).collect();
+
+    JSONFeed {
+        title: String::from("FINAL FANTASY XIV, The Lodestone"),
+        description: String::from("Official community site for FINAL FANTASY XIV: A Realm Reborn"),
+        home_page_url: String::from("http://na.finalfantasyxiv.com/lodestone/"),
+        icon: None,
+        items,
+    }
+}
+
 fn box_news<T: RSSChannelItem + 'static>(item: T) -> Box<RSSChannelItem> {
     Box::new(item)
+}
+
+fn convert_news<T: JSONFeedConvertable + 'static>(item: T) -> JSONFeedItem {
+    item.convert()
 }

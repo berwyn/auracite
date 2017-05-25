@@ -1,3 +1,6 @@
+use crypto::digest::Digest;
+use crypto::sha1::Sha1;
+use jsonfeed::{JSONFeedConvertable, JSONFeedItem};
 use rss::RSSChannelItem;
 use serde_json;
 use xml::writer::EventWriter;
@@ -29,7 +32,7 @@ impl NewsItem {
         NewsItem {
             title: title,
             description: description,
-            link: link,
+            link: link
         }
     }
 
@@ -55,5 +58,22 @@ impl RSSChannelItem for NewsItem {
         write_simple_xml(w, "title", self.title.as_str());
         write_simple_xml(w, "description", self.description.as_str());
         write_simple_xml(w, "link", self.link.as_str());
+    }
+}
+
+impl JSONFeedConvertable for NewsItem {
+    fn convert(self) -> JSONFeedItem {
+        let mut hasher = Sha1::new();
+        hasher.input_str(self.title.as_str());
+        return JSONFeedItem {
+            id: hasher.result_str(),
+            title: self.title,
+            url: self.link,
+            external_url: None,
+            content_html: None,
+            content_text: Some(self.description),
+            author: None,
+            date_published: None,
+        }
     }
 }
