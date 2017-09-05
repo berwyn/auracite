@@ -1,45 +1,35 @@
-use jsonfeed::{JSONFeed, JSONFeedConvertable, JSONFeedItem};
-use rss::{RSS, RSSChannel, RSSChannelItem};
-use storage::{connect_redis, pull_news};
-
-#[get("/")]
-pub fn index() -> &'static str {
-    "Lodestone root"
-}
+use jsonfeed;
+use jsonfeed::Feed;
+use rss;
+use rss::ChannelBuilder;
+use storage;
 
 #[get("/rss")]
-pub fn rss() -> RSS {
-    let items = pull_news("na", &connect_redis()).into_iter().map(box_news).collect();
+pub fn rss() -> String {
+    let conn = storage::connect_redis().unwrap();
+    let items: Vec<rss::Item> = storage::pull_news("na", &conn)
+        .unwrap()
+        .iter()
+        .map(|i| i.to_rss())
+        .collect();
 
-    RSS {
-        channel: RSSChannel {
-            title: String::from("FINAL FANTASY XIV, The Lodestone"),
-            description: String::from("Official community site for FINAL FANTASY XIV: A Realm Reborn."),
-            link: String::from("http://na.finalfantasyxiv.com/lodestone/"),
-            ttl: 1800,
-            items: items
-        }
-    }
+    ChannelBuilder::default()
+        .title("FINAL FANTASY XIV The Lodestone")
+        .link("https://na.finalfantasyxiv.com/lodestone/")
+        .items(items)
+        .build()
+        .unwrap()
+        .to_string()
 }
 
 #[get("/jsonfeed")]
-pub fn jsonfeed() -> JSONFeed {
-    let items = pull_news("na", &connect_redis()).into_iter().map(convert_news).collect();
+pub fn jsonfeed() -> String {
+    let mut feed = Feed::builder().title("FINAL FANTASY XIV The Lodestone");
+    let conn = storage::connect_redis().unwrap();
+    let items = storage::pull_news("na", &conn).unwrap();
+    for item in items {
+        feed = feed.item(item.to_jsonfeed());
+    }
 
-    let mut feed = JSONFeed::new(
-        1,
-        String::from("FINAL FANTASY XIV, The Lodestone"),
-        String::from("Official community site for FINAL FANTASY XIV: A Realm Reborn"),
-        String::from("http://na.finalfantasyxiv.com/lodestone/"));
-    feed.items = items;
-
-    feed
-}
-
-fn box_news<T: RSSChannelItem + 'static>(item: T) -> Box<RSSChannelItem> {
-    Box::new(item)
-}
-
-fn convert_news<T: JSONFeedConvertable + 'static>(item: T) -> JSONFeedItem {
-    item.convert()
+    jsonfeed::to_string(&feed.build()).unwrap()
 }

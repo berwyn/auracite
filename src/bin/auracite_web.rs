@@ -6,12 +6,12 @@ extern crate rocket;
 
 use auracite::{web, lodestone};
 use auracite::env::load_var;
-use rocket::config::{Config};
+use rocket::config::Config;
 
 fn main() {
     rocket::custom(config(), true)
         .mount("/", routes![web::root::web_root, web::assets::static_asset])
-        .mount("/lodestone", routes![lodestone::index, lodestone::rss, lodestone::jsonfeed])
+        .mount("/lodestone", routes![lodestone::rss, lodestone::jsonfeed])
         .catch(errors![web::core::not_found])
         .launch();
 }

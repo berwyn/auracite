@@ -6,18 +6,13 @@
 extern crate serde_derive;
 
 extern crate crypto;
-extern crate dotenv;
+extern crate jsonfeed;
 extern crate redis;
 extern crate rocket;
-extern crate serde;
+extern crate rss;
 extern crate serde_json;
-extern crate xml;
-
-mod xml_ext;
 
 pub mod env;
-pub mod jsonfeed;
 pub mod lodestone;
 pub mod storage;
-pub mod rss;
 pub mod web;

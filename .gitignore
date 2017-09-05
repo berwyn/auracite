@@ -2,3 +2,5 @@ target
 
 # Config
 .env
+
+*.rdb

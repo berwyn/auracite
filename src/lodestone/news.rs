@@ -1,10 +1,9 @@
 use crypto::digest::Digest;
 use crypto::sha1::Sha1;
-use jsonfeed::{JSONFeedConvertable, JSONFeedItem};
-use rss::RSSChannelItem;
+use jsonfeed;
+use rss;
 use serde_json;
-use xml::writer::EventWriter;
-use xml_ext::write_simple_xml;
+use web::feed::{FeedItem, JsonFeedItem, RssItem};
 
 /// An RSS Feed item representing a news topic as Lodestone displays it.
 #[derive(Serialize, Deserialize, Debug)]
@@ -32,7 +31,7 @@ impl NewsItem {
         NewsItem {
             title: title,
             description: description,
-            link: link
+            link: link,
         }
     }
 
@@ -53,27 +52,25 @@ impl NewsItem {
     }
 }
 
-impl RSSChannelItem for NewsItem {
-    fn write_xml(&self, w: &mut EventWriter<&mut Vec<u8>>) {
-        write_simple_xml(w, "title", self.title.as_str());
-        write_simple_xml(w, "description", self.description.as_str());
-        write_simple_xml(w, "link", self.link.as_str());
-    }
-}
+impl FeedItem for NewsItem {
+    fn to_jsonfeed(&self) -> JsonFeedItem {
+        let mut item = jsonfeed::Item::builder()
+            .title(self.title.clone())
+            .content_html(self.description.clone());
 
-impl JSONFeedConvertable for NewsItem {
-    fn convert(self) -> JSONFeedItem {
-        let mut hasher = Sha1::new();
-        hasher.input_str(self.title.as_str());
-        return JSONFeedItem {
-            id: hasher.result_str(),
-            title: self.title,
-            url: self.link,
-            external_url: None,
-            content_html: None,
-            content_text: Some(self.description),
-            author: None,
-            date_published: None,
-        }
+        let mut id = Sha1::new();
+        id.input(self.title.as_bytes());
+        item.id = Some(id.result_str());
+        item.build()
+            .unwrap()
+    }
+
+    fn to_rss(&self) -> RssItem {
+        rss::ItemBuilder::default()
+            .title(self.title.clone())
+            .description(self.description.clone())
+            .content(self.description.clone())
+            .build()
+            .unwrap()
     }
 }
